@@ -3,8 +3,6 @@ require 'uri'
 require 'rubygems'
 require 'json'
 
-BASE_URL = 'http://api.indextank.com/api/v0'
-
 module IndexTank
 
     private
