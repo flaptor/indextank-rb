@@ -98,8 +98,37 @@ module IndexTank
     end
     
     class IndexClient < RestClient
-        def initialize(index_url)
+        def initialize(index_url, metadata=nil)
             @uri = URI.parse(index_url)
+            @metadata = metadata
+        end
+        
+        def code
+            return metadata['code']
+        end
+    
+        def running?
+            return metadata!['started']
+        end
+        
+        def creation_time
+            return metadata['creation_time']
+        end
+        
+        def size
+            return metadata['size']
+        end
+    
+        def exists?
+            begin
+                metadata!
+                return true
+            rescue HttpCodeException
+                if $!.code == "404"
+                    return false
+                end
+                raise
+            end
         end
     
         # the options argument may contain a :variables key
@@ -189,7 +218,17 @@ module IndexTank
             code, r = DELETE ""
             return r
         end
-
+        
+        def metadata
+            metadata! if @metadata.nil?
+            return @metadata
+        end    
+        
+        def metadata!
+            code, @metadata = GET ""
+            return @metadata
+        end
+        
     end
     
     class IndexAlreadyExists < StandardError
