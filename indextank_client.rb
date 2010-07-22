@@ -186,7 +186,7 @@ module IndexTank
         end
         
         def delete_index()
-            code, r = DELETE "/v1/indexes/#{name}"
+            code, r = DELETE ""
             return r
         end
 
