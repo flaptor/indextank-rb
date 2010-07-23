@@ -12,21 +12,21 @@ module IndexTank
             path = "#{path}?#{to_query(params)}" if params
             request = Net::HTTP::Get.new "#{@uri}#{path}"
             authorize request
-            return execute request
+            return execute(request)
         end
         
         def PUT(path, body={})
             request = Net::HTTP::Put.new "#{@uri}#{path}"
             authorize request
             request.body = body.to_json if body
-            return execute request
+            return execute(request)
         end
         
         def DELETE(path, params={})
             path = "#{path}?#{to_query(params)}" if params
             request = Net::HTTP::Delete.new "#{@uri}#{path}"
             authorize request
-            return execute request
+            return execute(request)
         end
         
         private
@@ -75,7 +75,7 @@ module IndexTank
         end
         
         def get_index(name)
-            return IndexClient.new "#{@uri}/v1/indexes/#{name}"
+            return IndexClient.new("#{@uri}/v1/indexes/#{name}")
         end
     
         def create_index(name)
