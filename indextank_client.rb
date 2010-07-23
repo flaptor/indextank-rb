@@ -242,7 +242,13 @@ module IndexTank
         
         attr_accessor :code
         attr_accessor :message
-    end        
+    end
+    
+    class HerokuClient < ApiClient
+        def initialize()
+            super(ENV['HEROKUTANK_API_URL'])
+        end
+    end
 
     
 end
