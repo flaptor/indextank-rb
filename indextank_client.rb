@@ -90,8 +90,7 @@ module IndexTank
     
         def list_indexes()
             code, indexes = GET "/v1/indexes"
-            indexes.map do |name,metadata| IndexClient.new "#{@uri}/v1/indexes/#{name}", metadata end 
-            return indexes
+            return indexes.map do |name,metadata| IndexClient.new "#{@uri}/v1/indexes/#{name}", metadata end 
         end
     end
     
