@@ -75,7 +75,8 @@ module IndexTank
         end
         
         def get_index(name)
-            return IndexClient.new("#{@uri}/v1/indexes/#{name}")
+            require 'cgi' unless defined?(CGI) && defined?(CGI::escape)
+            return IndexClient.new("#{@uri}/v1/indexes/#{CGI.escape(name)}")
         end
     
         def create_index(name)
