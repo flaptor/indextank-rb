@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
-gem "faraday-middleware", "0.0.1"
 gem "faraday",            :git => "git://github.com/technoweenie/faraday.git", :ref => '3aa840d012875ee80410'
+gem "faraday-middleware", :git => "git://github.com/hone/faraday-middleware.git", :ref => '515f6791c020c8a1b168'
 gem "multi_json",         "0.0.4"
 
 group :development do
