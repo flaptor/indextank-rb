@@ -17,3 +17,13 @@ RSpec.configure do |c|
   c.color_enabled = not_in_editor?
   c.mock_with :rr
 end
+
+def stub_setup_connection
+  stub(IndexTank).setup_connection(anything) do |url|
+    Faraday::Connection.new(:url => url) do |builder|
+      builder.adapter :test, @stubs
+      builder.use Faraday::Response::MultiJson
+      builder.use Faraday::Response::Mashify
+    end
+  end
+end
