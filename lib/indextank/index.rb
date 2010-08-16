@@ -28,6 +28,8 @@ module IndexTank
       if response.status == 200
         @metadata = response.body
       end
+
+      response
     end
 
     def delete
@@ -42,6 +44,10 @@ module IndexTank
     def method_missing(sym, *args, &block)
       refresh if @metadata.nil?
       @metadata[sym.to_s]
+    end
+
+    def exists?
+      refresh.status != 404
     end
   end
 end

@@ -115,5 +115,27 @@ describe IndexTank::Index do
       it_should_behave_like "metadata"
     end
   end
+
+  context "#exists?" do
+    context "when an index exists" do
+      before do
+        @stubs.get(@path_prefix) { [200, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
+      end
+
+      it "should return true" do
+        @index.exists?.should be_true
+      end
+    end
+
+    context "when an index doesn't exist" do
+      before do
+        @stubs.get(@path_prefix) { [404, {}, ''] }
+      end
+
+      it "should return false" do
+        @index.exists?.should be_false
+      end
+    end
+  end
 end
 
