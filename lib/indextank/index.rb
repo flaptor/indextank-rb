@@ -8,7 +8,6 @@ module IndexTank
   class Index
     def initialize(index_url, metadata = nil)
       @conn = IndexTank.setup_connection(index_url)
-
       @metadata = metadata
     end
 
@@ -24,11 +23,24 @@ module IndexTank
       end
     end
 
+    def refresh
+      response = @conn.get('')
+      if response.status == 200
+        @metadata = response.body
+      end
+    end
+
     def delete
       response = @conn.delete('')
     end
 
+    def running?
+      refresh
+      @metadata['started']
+    end
+
     def method_missing(sym, *args, &block)
+      refresh if @metadata.nil?
       @metadata[sym.to_s]
     end
   end

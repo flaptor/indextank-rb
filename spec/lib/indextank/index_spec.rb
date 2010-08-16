@@ -71,5 +71,49 @@ describe IndexTank::Index do
   end
 
   context "when examining the metadata" do
+    shared_examples_for "metadata" do
+      it "should return the code" do
+        @index.code.should == 'dsyaj'
+      end
+
+      it "should update and return the running" do
+        # delete any preceding stubs if they exist.
+        @stubs.match(:get, @path_prefix, nil)
+        @stubs.get(@path_prefix) { [200, {}, '{"started": true, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
+        @index.running?.should be_true
+      end
+
+      it "should return the size" do
+        @index.size.should == 0
+      end
+
+      it "should return the creation_time" do
+        @index.creation_time.should == "2010-08-14T13:01:48.454624"
+      end
+    end
+
+    context "pass in metadata" do
+      before do
+        @metadata = {
+          'code'          => "dsyaj",
+          'started'       => false,
+          'size'          => 0,
+          'creation_time' => '2010-08-14T13:01:48.454624'
+        }
+        @index = IndexTank::Index.new("http://api.indextank.com#{@path_prefix}", @metadata)
+      end
+
+      it_should_behave_like "metadata"
+    end
+
+    context "metadata is not passed in" do
+      before do
+        @index = IndexTank::Client.new("http://:uiTPmHg2JTjSMD@dstqe.api.indextank.com").indexes('new-index')
+        @stubs.get(@path_prefix) { [200, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
+      end
+
+      it_should_behave_like "metadata"
+    end
   end
 end
+
