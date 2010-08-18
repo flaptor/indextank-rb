@@ -137,5 +137,26 @@ describe IndexTank::Index do
       end
     end
   end
+
+  context "#search" do
+    before do
+      @stubs.get("/search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
+    end
+
+    it "should have the number of matches" do
+      @index.search('foo')['matches'].should == 4
+    end
+
+    it "should a list of docs" do
+      results = @index.search('foo')['results']
+
+      %w(http://cnn.com/HEALTH
+         http://www.cnn.com/HEALTH/
+         http://cnn.com/HEALTH/?hpt=Sbin
+         http://cnn.com/HEALTH/).each_with_index do |docid, index|
+        results[index]['docid'].should == docid
+      end
+    end
+  end
 end
 
