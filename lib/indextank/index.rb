@@ -1,10 +1,12 @@
 require 'indextank/exceptions'
+require 'indextank/document'
 require 'json'
 
 module IndexTank
   class Index
     def initialize(index_url, metadata = nil)
-      @conn = IndexTank.setup_connection(index_url)
+      @uri      = index_url
+      @conn     = IndexTank.setup_connection(index_url)
       @metadata = metadata
     end
 
@@ -80,6 +82,10 @@ module IndexTank
       else
         false
       end
+    end
+
+    def document(docid)
+      Document.new("#{@uri}/docs", docid)
     end
   end
 end

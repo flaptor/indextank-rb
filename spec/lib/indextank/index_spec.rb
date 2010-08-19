@@ -226,5 +226,11 @@ describe IndexTank::Index do
       end
     end
   end
+
+  describe "#document" do
+    it "should create a document object" do
+      @index.document('foo').should be_an_instance_of(IndexTank::Document)
+    end
+  end
 end
 
