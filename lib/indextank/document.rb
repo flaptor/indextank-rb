@@ -16,11 +16,7 @@ module IndexTank
         req.body = options.to_json
       end
 
-      if resp.status == 200
-        true
-      else
-        false
-      end
+      resp.status == 200
     end
 
     def delete(options = {})
