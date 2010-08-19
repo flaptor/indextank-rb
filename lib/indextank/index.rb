@@ -71,6 +71,16 @@ module IndexTank
     # the options argument may contain an :index_code definition to override 
     # this instance's default index_code  
     def promote(docid, query, options={})
+      options.merge!( :docid => docid, :query => query )
+      resp = @conn.get do |req|
+        req.url '/promote', options
+      end
+
+      if resp.status == 200
+        true
+      else
+        false
+      end
     end
   end
 end

@@ -184,5 +184,47 @@ describe IndexTank::Index do
       it "should return a descriptive error message"
     end
   end
+
+  context "#promote" do
+    context "when the document is promoted" do
+      before do
+        @stubs.get("/promote?docid=4&query=foo") { [200, {}, ''] }
+      end
+
+      it "should return true" do
+        @index.promote(4, 'foo').should be_true
+      end
+    end
+
+    context "when the index is initializing" do
+      before do
+        @stubs.get("/promote?docid=4&query=foo") { [409, {}, ''] }
+      end
+
+      it "should return false" do
+        @index.promote(4, 'foo').should be_false
+      end
+    end
+
+    context "when invalid or missing argument" do
+      before do
+        @stubs.get("/promote?docid=4&query=foo") { [400, {}, ''] }
+      end
+
+      it "should return false" do
+        @index.promote(4, 'foo').should be_false
+      end
+    end
+
+    context "when no index exists for the given name" do
+      before do
+        @stubs.get("/promote?docid=4&query=foo") { [404, {}, ''] }
+      end
+
+      it "should return false" do
+        @index.promote(4, 'foo').should be_false
+      end
+    end
+  end
 end
 
