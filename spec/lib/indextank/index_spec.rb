@@ -141,7 +141,7 @@ describe IndexTank::Index do
   describe "#search" do
     context "search is successful" do
       before do
-        @stubs.get("/search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
+        @stubs.get("/search") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
       end
 
       it "should have the number of matches" do
@@ -162,7 +162,7 @@ describe IndexTank::Index do
 
     context "index is initializing", :pending => true do
       before do
-        @stubs.get("/search?q=foo&start=0&len=10") { [409, {}, ''] }
+        @stubs.get("/search") { [409, {}, ''] }
       end
 
       it "should return an empty body"
@@ -170,7 +170,7 @@ describe IndexTank::Index do
 
     context "index is invalid/missing argument", :pending => true do
       before do
-        @stubs.get("/search?q=foo&start=0&len=10") { [400, {}, ''] }
+        @stubs.get("/search") { [400, {}, ''] }
       end
 
       it "should return a descriptive error message"
@@ -178,7 +178,7 @@ describe IndexTank::Index do
 
     context "no index existed for the given name", :pending => true do
       before do
-        @stubs.get("/search?q=foo&start=0&len=10") { [404, {}, ''] }
+        @stubs.get("/search") { [404, {}, ''] }
       end
 
       it "should return a descriptive error message"
@@ -188,7 +188,7 @@ describe IndexTank::Index do
   describe "#promote" do
     context "when the document is promoted" do
       before do
-        @stubs.get("/promote?docid=4&query=foo") { [200, {}, ''] }
+        @stubs.get("/promote") { [200, {}, ''] }
       end
 
       it "should return true" do
@@ -198,7 +198,7 @@ describe IndexTank::Index do
 
     context "when the index is initializing" do
       before do
-        @stubs.get("/promote?docid=4&query=foo") { [409, {}, ''] }
+        @stubs.get("/promote") { [409, {}, ''] }
       end
 
       it "should return false" do
@@ -208,7 +208,7 @@ describe IndexTank::Index do
 
     context "when invalid or missing argument" do
       before do
-        @stubs.get("/promote?docid=4&query=foo") { [400, {}, ''] }
+        @stubs.get("/promote") { [400, {}, ''] }
       end
 
       it "should return false" do
@@ -218,7 +218,7 @@ describe IndexTank::Index do
 
     context "when no index exists for the given name" do
       before do
-        @stubs.get("/promote?docid=4&query=foo") { [404, {}, ''] }
+        @stubs.get("/promote") { [404, {}, ''] }
       end
 
       it "should return false" do

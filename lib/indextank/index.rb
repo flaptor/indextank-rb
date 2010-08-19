@@ -61,7 +61,8 @@ module IndexTank
     def search(query, options = {})
       options = {:start => 0, :len => 10 }.merge(options).merge(:q => query)
       @conn.get do |req|
-        req.url '/search', options
+        req.url '/search'
+        req.body = options.to_json
       end.body
     end
 
@@ -70,7 +71,8 @@ module IndexTank
     def promote(docid, query, options={})
       options.merge!( :docid => docid, :query => query )
       resp = @conn.get do |req|
-        req.url '/promote', options
+        req.url '/promote'
+        req.body = options.to_json
       end
 
       if resp.status == 200
