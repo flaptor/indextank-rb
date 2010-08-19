@@ -67,5 +67,10 @@ module IndexTank
         req.url '/search', options
       end.body
     end
+
+    # the options argument may contain an :index_code definition to override 
+    # this instance's default index_code  
+    def promote(docid, query, options={})
+    end
   end
 end

@@ -139,23 +139,49 @@ describe IndexTank::Index do
   end
 
   context "#search" do
-    before do
-      @stubs.get("/search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
-    end
-
-    it "should have the number of matches" do
-      @index.search('foo')['matches'].should == 4
-    end
-
-    it "should a list of docs" do
-      results = @index.search('foo')['results']
-
-      %w(http://cnn.com/HEALTH
-         http://www.cnn.com/HEALTH/
-         http://cnn.com/HEALTH/?hpt=Sbin
-         http://cnn.com/HEALTH/).each_with_index do |docid, index|
-        results[index]['docid'].should == docid
+    context "search is successful" do
+      before do
+        @stubs.get("/search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
       end
+
+      it "should have the number of matches" do
+        @index.search('foo')['matches'].should == 4
+      end
+
+      it "should a list of docs" do
+        results = @index.search('foo')['results']
+
+        %w(http://cnn.com/HEALTH
+           http://www.cnn.com/HEALTH/
+           http://cnn.com/HEALTH/?hpt=Sbin
+           http://cnn.com/HEALTH/).each_with_index do |docid, index|
+          results[index]['docid'].should == docid
+        end
+      end
+    end
+
+    context "index is initializing", :pending => true do
+      before do
+        @stubs.get("/search?q=foo&start=0&len=10") { [409, {}, ''] }
+      end
+
+      it "should return an empty body"
+    end
+
+    context "index is invalid/missing argument", :pending => true do
+      before do
+        @stubs.get("/search?q=foo&start=0&len=10") { [400, {}, ''] }
+      end
+
+      it "should return a descriptive error message"
+    end
+
+    context "no index existed for the given name", :pending => true do
+      before do
+        @stubs.get("/search?q=foo&start=0&len=10") { [404, {}, ''] }
+      end
+
+      it "should return a descriptive error message"
     end
   end
 end
