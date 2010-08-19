@@ -22,5 +22,15 @@ module IndexTank
         false
       end
     end
+
+    def delete(options = {})
+      options.merge!(:docid => self.docid)
+      resp = @conn.delete do |req|
+        req.url ""
+        req.body = options.to_json
+      end
+
+      resp.status == 200
+    end
   end
 end

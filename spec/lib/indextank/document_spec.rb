@@ -50,5 +50,47 @@ describe IndexTank::Document do
         end
       end
     end
+
+    describe "#delete" do
+      context "document was deleted" do
+        before do
+          @stubs.delete(@path_prefix) { [200, {}, ''] }
+        end
+
+        it "should return true" do
+          @document.delete.should be_true
+        end
+      end
+
+      context "index is initializing" do
+        before do
+          @stubs.delete(@path_prefix) { [409, {}, ''] }
+        end
+
+        it "should return false" do
+          @document.delete.should be_false
+        end
+      end
+
+      context "invalid or missing argument" do
+        before do
+          @stubs.delete(@path_prefix) { [400, {}, ''] }
+        end
+
+        it "should return false" do
+          @document.delete.should be_false
+        end
+      end
+
+      context "no index existed for the given name" do
+        before do
+          @stubs.delete(@path_prefix) { [404, {}, ''] }
+        end
+
+        it "should return false" do
+          @document.delete.should be_false
+        end
+      end
+    end
   end
 end
