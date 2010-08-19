@@ -7,7 +7,7 @@ describe IndexTank::Client do
     @client = IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com")
   end
 
-  context "indexes" do
+  describe "indexes" do
     context "with a param" do
       it "should return a single index object" do
         @client.indexes('crawled-index').should be_an_instance_of(IndexTank::Index)

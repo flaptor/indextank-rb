@@ -8,8 +8,8 @@ describe IndexTank::Index do
     @path_prefix = '/v1/indexes/new-index/'
   end
 
-  context "index management" do
-    context "add an index" do
+  describe "index management" do
+    describe "add an index" do
       # after do
       #   @index.delete
       # end
@@ -46,7 +46,7 @@ describe IndexTank::Index do
       end
     end
 
-    context "delete an index" do
+    describe "delete an index" do
       context "the index exists" do
         before do
           # @index.add
@@ -116,7 +116,7 @@ describe IndexTank::Index do
     end
   end
 
-  context "#exists?" do
+  describe "#exists?" do
     context "when an index exists" do
       before do
         @stubs.get(@path_prefix) { [200, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
@@ -138,7 +138,7 @@ describe IndexTank::Index do
     end
   end
 
-  context "#search" do
+  describe "#search" do
     context "search is successful" do
       before do
         @stubs.get("/search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
@@ -185,7 +185,7 @@ describe IndexTank::Index do
     end
   end
 
-  context "#promote" do
+  describe "#promote" do
     context "when the document is promoted" do
       before do
         @stubs.get("/promote?docid=4&query=foo") { [200, {}, ''] }
