@@ -9,6 +9,10 @@ module IndexTank
       @conn  = IndexTank.setup_connection(document_url)
     end
 
+    # the options argument may contain a :variables key
+    # with a Hash from variable numbers to their float values
+    # this variables can be used in the scoring functions
+    # when sorting a search
     def add(fields, options = {})
       options.merge!(:docid => self.docid, :fields => fields)
       resp = @conn.put do |req|
