@@ -28,5 +28,15 @@ module IndexTank
 
       resp.status == 200
     end
+
+    def update_variables(variables, options = {})
+      options.merge!(:docid => self.docid, :variables => variables)
+      resp = @conn.put do |req|
+        req.url "variables"
+        req.body = options.to_json
+      end
+
+      resp.status == 200
+    end
   end
 end

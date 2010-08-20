@@ -93,4 +93,54 @@ describe IndexTank::Document do
       end
     end
   end
+
+  describe "#update_variables" do
+    before do
+      @new_variables = {
+        0 => 'new_rating',
+        1 => 'new_reputation',
+        2 => 'new_visits'
+      }
+    end
+
+    context "variables indexed" do
+      before do
+        @stubs.put("#{@path_prefix}variables") { [200, {}, ''] }
+      end
+
+      it "should return true" do
+        @document.update_variables(@new_variables).should be_true
+      end
+    end
+
+    context "index is initializing" do
+      before do
+        @stubs.put("#{@path_prefix}variables") { [409, {}, ''] }
+      end
+
+      it "should return false" do
+        @document.update_variables(@new_variables).should be_false
+      end
+    end
+
+    context "invalid or missing argument" do
+      before do
+        @stubs.put("#{@path_prefix}variables") { [400, {}, ''] }
+      end
+
+      it "should return false" do
+        @document.update_variables(@new_variables).should be_false
+      end
+    end
+
+    context "no index existed for the given name" do
+      before do
+        @stubs.put("#{@path_prefix}variables") { [404, {}, ''] }
+      end
+
+      it "should return false" do
+        @document.update_variables(@new_variables).should be_false
+      end
+    end
+  end
 end
