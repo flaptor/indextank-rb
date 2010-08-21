@@ -1,5 +1,6 @@
 require 'indextank/exceptions'
 require 'indextank/document'
+require 'indextank/function'
 require 'json'
 
 module IndexTank
@@ -82,6 +83,16 @@ module IndexTank
 
     def document(docid)
       Document.new("#{@uri}/docs", docid)
+    end
+
+    def functions(index = -1, formula = '')
+      if index == -1 and formula.empty?
+        @conn.get("/functions").body.sort.collect do |index, formula|
+          Function.new("#{@uri}/functions", index, formula)
+        end
+      else
+        Function.new("#{@uri}/functions", index, formula)
+      end
     end
   end
 end

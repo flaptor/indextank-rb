@@ -232,5 +232,27 @@ describe IndexTank::Index do
       @index.document('foo').should be_an_instance_of(IndexTank::Document)
     end
   end
+
+  describe "#function" do
+    context "with no params" do
+      before do
+        @stubs.get("/functions") { [200, {}, '{"0": "0-A", "1": "-age", "2": "relevance"}'] }
+      end
+
+      it "should return an array of functions" do
+        @index.functions.should == [
+          IndexTank::Function.new("#{@path_prefix}functions", 0, '0-A'),
+          IndexTank::Function.new("#{@path_prefix}functions", 1, '-age'),
+          IndexTank::Function.new("#{@path_prefix}functions", 2, 'relevance')
+        ]
+      end
+    end
+
+    context "with a function name" do
+      it "should an instance of Function" do
+        @index.functions(0, '-age').should be_an_instance_of(IndexTank::Function)
+      end
+    end
+  end
 end
 
