@@ -2,18 +2,18 @@ require 'json'
 
 module IndexTank
   class Function
-    attr_reader :uri, :index, :formula
+    attr_reader :uri, :index, :definition
 
-    def initialize(function_url, index, formula)
       @uri     = function_url
+    def initialize(function_url, index, definition)
       @index   = index
-      @formula = formula
+      @definition = definition
     end
 
     def ==(other)
       self.uri == other.uri and
         self.index == other.index
-        self.formula == other.formula
+        self.definition == other.definition
     end
   end
 end
