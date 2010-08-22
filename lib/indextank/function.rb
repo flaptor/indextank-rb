@@ -4,10 +4,11 @@ module IndexTank
   class Function
     attr_reader :uri, :index, :definition
 
-      @uri     = function_url
     def initialize(function_url, index, definition)
+      @uri     = "#{function_url}/#{index}"
       @index   = index
       @definition = definition
+      @conn    = IndexTank.setup_connection(@uri)
     end
 
     def ==(other)
