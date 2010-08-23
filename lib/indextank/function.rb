@@ -21,6 +21,15 @@ module IndexTank
       resp.status == 200
     end
 
+    def delete(options = {})
+      resp = @conn.delete do |req|
+        req.url ''
+        req.body = options.to_json
+      end
+
+      resp.status == 200
+    end
+
     def ==(other)
       self.uri == other.uri and
         self.index == other.index
