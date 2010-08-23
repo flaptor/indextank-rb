@@ -248,9 +248,15 @@ describe IndexTank::Index do
       end
     end
 
-    context "with a function name" do
-      it "should an instance of Function" do
+    context "with a function name and definition" do
+      it "should return an instance of Function" do
         @index.functions(0, '-age').should be_an_instance_of(IndexTank::Function)
+      end
+    end
+
+    context "with a function name" do
+      it "should return an instance of Function" do
+        @index.functions(0).should be_an_instance_of(IndexTank::Function)
       end
     end
   end

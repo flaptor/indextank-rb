@@ -10,6 +10,16 @@ describe IndexTank::Function do
 
   describe "function management" do
     describe "#add" do
+      context "no definition specified" do
+        before do
+          @function = IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index').functions(0)
+        end
+
+        it "should raise an exception" do
+          lambda { @function.add }.should raise_error(IndexTank::MissingFunctionDefinition)
+        end
+      end
+
       context "function saved" do
         before do
           @stubs.put(@path_prefix) { [200, {}, ''] }

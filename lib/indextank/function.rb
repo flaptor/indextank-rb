@@ -5,13 +5,15 @@ module IndexTank
     attr_reader :uri, :index, :definition
 
     def initialize(function_url, index, definition)
-      @uri     = "#{function_url}/#{index}"
-      @index   = index
+      @uri        = "#{function_url}/#{index}"
+      @index      = index
       @definition = definition
-      @conn    = IndexTank.setup_connection(@uri)
+      @conn       = IndexTank.setup_connection(@uri)
     end
 
     def add(options = {})
+      raise MissingFunctionDefinition unless self.definition
+
       options.merge!(:definition => self.definition)
       resp = @conn.put do |req|
         req.url ''

@@ -85,8 +85,8 @@ module IndexTank
       Document.new("#{@uri}/docs", docid)
     end
 
-    def functions(index = -1, formula = '')
-      if index == -1 and formula.empty?
+    def functions(index = -1, formula = nil)
+      if index == -1
         @conn.get("/functions").body.sort.collect do |index, formula|
           Function.new("#{@uri}/functions", index, formula)
         end
