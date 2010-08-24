@@ -22,8 +22,7 @@ def stub_setup_connection
   stub(IndexTank).setup_connection(anything) do |url|
     Faraday::Connection.new(:url => url) do |builder|
       builder.adapter :test, @stubs
-      builder.use Faraday::Response::MultiJson
-      builder.use Faraday::Response::Mashify
+      builder.use Faraday::Response::Yajl
     end
   end
 end
