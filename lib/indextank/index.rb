@@ -64,8 +64,7 @@ module IndexTank
     def search(query, options = {})
       options = {:start => 0, :len => 10 }.merge(options).merge(:q => query)
       @conn.get do |req|
-        req.url '/search'
-        req.body = options.to_json
+        req.url 'search', options
       end.body
     end
 

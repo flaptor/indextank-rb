@@ -141,7 +141,7 @@ describe IndexTank::Index do
   describe "#search" do
     context "search is successful" do
       before do
-        @stubs.get("/search") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
+        @stubs.get("#{@path_prefix}search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
       end
 
       it "should have the number of matches" do
@@ -162,7 +162,7 @@ describe IndexTank::Index do
 
     context "index is initializing", :pending => true do
       before do
-        @stubs.get("/search") { [409, {}, ''] }
+        @stubs.get("#{@path_prefix}search") { [409, {}, ''] }
       end
 
       it "should return an empty body"
@@ -170,7 +170,7 @@ describe IndexTank::Index do
 
     context "index is invalid/missing argument", :pending => true do
       before do
-        @stubs.get("/search") { [400, {}, ''] }
+        @stubs.get("#{@path_prefix}search") { [400, {}, ''] }
       end
 
       it "should return a descriptive error message"
@@ -178,7 +178,7 @@ describe IndexTank::Index do
 
     context "no index existed for the given name", :pending => true do
       before do
-        @stubs.get("/search") { [404, {}, ''] }
+        @stubs.get("#{@path_prefix}search") { [404, {}, ''] }
       end
 
       it "should return a descriptive error message"
