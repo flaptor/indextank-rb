@@ -194,7 +194,7 @@ describe IndexTank::Index do
 
     context "when the document is promoted" do
       before do
-        stubs.get("/promote") { [200, {}, ''] }
+        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [200, {}, ''] }
       end
 
       it { should be_true }
@@ -202,7 +202,7 @@ describe IndexTank::Index do
 
     context "when the index is initializing" do
       before do
-        stubs.get("/promote") { [409, {}, ''] }
+        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [409, {}, ''] }
       end
 
       it { subject.should be_false }
@@ -210,7 +210,7 @@ describe IndexTank::Index do
 
     context "when invalid or missing argument" do
       before do
-        stubs.get("/promote") { [400, {}, ''] }
+        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [400, {}, ''] }
       end
 
       it { subject.should be_false }
@@ -218,7 +218,7 @@ describe IndexTank::Index do
 
     context "when no index exists for the given name" do
       before do
-        stubs.get("/promote") { [404, {}, ''] }
+        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [404, {}, ''] }
       end
 
       it { subject.should be_false }

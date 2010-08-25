@@ -73,8 +73,7 @@ module IndexTank
     def promote(docid, query, options={})
       options.merge!( :docid => docid, :query => query )
       resp = @conn.get do |req|
-        req.url '/promote'
-        req.body = options.to_json
+        req.url 'promote', options
       end
 
       resp.status == 200
