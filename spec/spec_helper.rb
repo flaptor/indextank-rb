@@ -21,7 +21,7 @@ end
 def stub_setup_connection
   stub(IndexTank).setup_connection(anything) do |url|
     Faraday::Connection.new(:url => url) do |builder|
-      builder.adapter :test, @stubs
+      builder.adapter :test, stubs
       builder.use Faraday::Response::Yajl
     end
   end

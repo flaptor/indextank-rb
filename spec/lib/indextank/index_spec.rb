@@ -1,115 +1,118 @@
 require File.expand_path('../../../spec_helper', __FILE__)
 
 describe IndexTank::Index do
-  before do
-    @stubs = Faraday::Adapter::Test::Stubs.new
-    stub_setup_connection
-    @index = IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index')
-    @path_prefix = '/v1/indexes/new-index/'
-  end
+  let(:stubs) { Faraday::Adapter::Test::Stubs.new }
+  let(:index) { IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index') }
+  let(:path_prefix) { '/v1/indexes/new-index/' }
+
+  before { stub_setup_connection }
 
   describe "index management" do
     describe "add an index" do
+      subject { index.add }
       # after do
       #   @index.delete
       # end
 
       context "the index does not exist" do
         before do
-          @stubs.put(@path_prefix) { [201, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
+          stubs.put(path_prefix) { [201, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
         end
 
-        it "should add the index" do
-          @index.add.should be_true
-        end
+        it { should be_true }
       end
 
       context "when an index already exists" do
         before do
           # @index.add
-          @stubs.put(@path_prefix) { [204, {}, ''] }
+          stubs.put(path_prefix) { [204, {}, ''] }
         end
 
         it "should raise an exception" do
-          lambda { @index.add }.should raise_error(IndexTank::IndexAlreadyExists)
+          expect { subject }.to raise_error(IndexTank::IndexAlreadyExists)
         end
       end
 
       context "when the user has too many indexes" do
         before do
-          @stubs.put(@path_prefix) { [409, {}, ''] }
+          stubs.put(path_prefix) { [409, {}, ''] }
         end
 
         it "should raise an exception" do
-          lambda { @index.add }.should raise_error(IndexTank::TooManyIndexes)
+          expect { subject }.to raise_error(IndexTank::TooManyIndexes)
         end
       end
     end
 
     describe "delete an index" do
+      subject { index.delete }
+
       context "the index exists" do
         before do
           # @index.add
-          @stubs.delete(@path_prefix) { [200, {}, ''] }
+          stubs.delete(path_prefix) { [200, {}, ''] }
         end
 
         it "should be a success" do
-          @index.delete.status.should == 200
+          subject.status.should == 200
         end
       end
 
       context "the index does not exist" do
         before do
-          @stubs.delete(@path_prefix) { [204, {}, ''] }
+          stubs.delete(path_prefix) { [204, {}, ''] }
         end
 
         it "should have no content" do
-          @index.delete.status.should == 204
+          subject.status.should == 204
         end
       end
     end
   end
 
   context "when examining the metadata" do
+    subject { index }
+
     shared_examples_for "metadata" do
       it "should return the code" do
-        @index.code.should == 'dsyaj'
+        subject.code.should == 'dsyaj'
       end
 
       it "should update and return the running" do
         # delete any preceding stubs if they exist.
-        @stubs.match(:get, @path_prefix, nil)
-        @stubs.get(@path_prefix) { [200, {}, '{"started": true, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
-        @index.running?.should be_true
+        stubs.match(:get, path_prefix, nil)
+        stubs.get(path_prefix) { [200, {}, '{"started": true, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
+        subject.running?.should be_true
       end
 
       it "should return the size" do
-        @index.size.should == 0
+        subject.size.should == 0
       end
 
       it "should return the creation_time" do
-        @index.creation_time.should == "2010-08-14T13:01:48.454624"
+        subject.creation_time.should == "2010-08-14T13:01:48.454624"
       end
     end
 
     context "pass in metadata" do
-      before do
-        @metadata = {
+      let(:metadata) do
+        {
           'code'          => "dsyaj",
           'started'       => false,
           'size'          => 0,
           'creation_time' => '2010-08-14T13:01:48.454624'
         }
-        @index = IndexTank::Index.new("http://api.indextank.com#{@path_prefix}", @metadata)
       end
+      let(:index) { IndexTank::Index.new("http://api.indextank.com#{path_prefix}", metadata) }
 
       it_should_behave_like "metadata"
     end
 
     context "metadata is not passed in" do
+      let(:index) { IndexTank::Client.new("http://:uiTPmHg2JTjSMD@dstqe.api.indextank.com").indexes('new-index') }
+
       before do
-        @index = IndexTank::Client.new("http://:uiTPmHg2JTjSMD@dstqe.api.indextank.com").indexes('new-index')
-        @stubs.get(@path_prefix) { [200, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
+        stubs.get(path_prefix) { [200, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
       end
 
       it_should_behave_like "metadata"
@@ -117,39 +120,40 @@ describe IndexTank::Index do
   end
 
   describe "#exists?" do
+    subject { index.exists? }
+
     context "when an index exists" do
       before do
-        @stubs.get(@path_prefix) { [200, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
+        stubs.get(path_prefix) { [200, {}, '{"started": false, "code": "dsyaj", "creation_time": "2010-08-14T13:01:48.454624", "size": 0}'] }
       end
 
-      it "should return true" do
-        @index.exists?.should be_true
-      end
+      it { should be_true }
     end
 
     context "when an index doesn't exist" do
       before do
-        @stubs.get(@path_prefix) { [404, {}, ''] }
+        stubs.get(path_prefix) { [404, {}, ''] }
       end
 
-      it "should return false" do
-        @index.exists?.should be_false
-      end
+      # rspec2 bug, implicit subject is calling subject twice
+      it { subject.should be_false }
     end
   end
 
   describe "#search" do
+    subject { index.search('foo') }
+
     context "search is successful" do
       before do
-        @stubs.get("#{@path_prefix}search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
+        stubs.get("#{path_prefix}search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
       end
 
       it "should have the number of matches" do
-        @index.search('foo')['matches'].should == 4
+        subject['matches'].should == 4
       end
 
       it "should a list of docs" do
-        results = @index.search('foo')['results']
+        results = subject['results']
 
         %w(http://cnn.com/HEALTH
            http://www.cnn.com/HEALTH/
@@ -162,7 +166,7 @@ describe IndexTank::Index do
 
     context "index is initializing", :pending => true do
       before do
-        @stubs.get("#{@path_prefix}search") { [409, {}, ''] }
+        stubs.get("#{path_prefix}search") { [409, {}, ''] }
       end
 
       it "should return an empty body"
@@ -170,7 +174,7 @@ describe IndexTank::Index do
 
     context "index is invalid/missing argument", :pending => true do
       before do
-        @stubs.get("#{@path_prefix}search") { [400, {}, ''] }
+        stubs.get("#{path_prefix}search") { [400, {}, ''] }
       end
 
       it "should return a descriptive error message"
@@ -178,7 +182,7 @@ describe IndexTank::Index do
 
     context "no index existed for the given name", :pending => true do
       before do
-        @stubs.get("#{@path_prefix}search") { [404, {}, ''] }
+        stubs.get("#{path_prefix}search") { [404, {}, ''] }
       end
 
       it "should return a descriptive error message"
@@ -186,77 +190,79 @@ describe IndexTank::Index do
   end
 
   describe "#promote" do
+    subject { index.promote(4, 'foo') }
+
     context "when the document is promoted" do
       before do
-        @stubs.get("/promote") { [200, {}, ''] }
+        stubs.get("/promote") { [200, {}, ''] }
       end
 
-      it "should return true" do
-        @index.promote(4, 'foo').should be_true
-      end
+      it { should be_true }
     end
 
     context "when the index is initializing" do
       before do
-        @stubs.get("/promote") { [409, {}, ''] }
+        stubs.get("/promote") { [409, {}, ''] }
       end
 
-      it "should return false" do
-        @index.promote(4, 'foo').should be_false
-      end
+      it { subject.should be_false }
     end
 
     context "when invalid or missing argument" do
       before do
-        @stubs.get("/promote") { [400, {}, ''] }
+        stubs.get("/promote") { [400, {}, ''] }
       end
 
-      it "should return false" do
-        @index.promote(4, 'foo').should be_false
-      end
+      it { subject.should be_false }
     end
 
     context "when no index exists for the given name" do
       before do
-        @stubs.get("/promote") { [404, {}, ''] }
+        stubs.get("/promote") { [404, {}, ''] }
       end
 
-      it "should return false" do
-        @index.promote(4, 'foo').should be_false
-      end
+      it { subject.should be_false }
     end
   end
 
   describe "#document" do
+    subject { index.document('foo') }
+
     it "should create a document object" do
-      @index.document('foo').should be_an_instance_of(IndexTank::Document)
+      should be_an_instance_of(IndexTank::Document)
     end
   end
 
   describe "#function" do
     context "with no params" do
+      subject { index.functions }
+
       before do
-        @stubs.get("/functions") { [200, {}, '{"0": "0-A", "1": "-age", "2": "relevance"}'] }
+        stubs.get("/functions") { [200, {}, '{"0": "0-A", "1": "-age", "2": "relevance"}'] }
       end
 
       it "should return an array of functions" do
-        @index.functions.should == [
-          IndexTank::Function.new("#{@path_prefix}functions", 0, '0-A'),
-          IndexTank::Function.new("#{@path_prefix}functions", 1, '-age'),
-          IndexTank::Function.new("#{@path_prefix}functions", 2, 'relevance')
+        should == [
+          IndexTank::Function.new("#{path_prefix}functions", 0, '0-A'),
+          IndexTank::Function.new("#{path_prefix}functions", 1, '-age'),
+          IndexTank::Function.new("#{path_prefix}functions", 2, 'relevance')
         ]
       end
     end
 
     context "with a function name and definition" do
+      subject { index.functions(0, '-age') }
+
       it "should return an instance of Function" do
-        @index.functions(0, '-age').should be_an_instance_of(IndexTank::Function)
+        should be_an_instance_of(IndexTank::Function)
       end
     end
 
     context "with a function name" do
+      subject { index.functions(0) }
+
       it "should return an instance of Function" do
-        @index.functions(0).should be_an_instance_of(IndexTank::Function)
+        should be_an_instance_of(IndexTank::Function)
       end
     end
   end

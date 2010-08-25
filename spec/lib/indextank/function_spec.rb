@@ -1,105 +1,89 @@
 require File.expand_path('../../../spec_helper', __FILE__)
 
 describe IndexTank::Function do
-  before do
-    @stubs = Faraday::Adapter::Test::Stubs.new
-    stub_setup_connection
-    @function = IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index').functions(0, '-age')
-    @path_prefix = '/v1/indexes/new-index/functions/0/'
-  end
+  let(:stubs) { Faraday::Adapter::Test::Stubs.new }
+  let(:function) { IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index').functions(0, '-age') }
+  let(:path_prefix) { '/v1/indexes/new-index/functions/0/' }
+
+  before { stub_setup_connection }
 
   describe "function management" do
     describe "#add" do
-      context "no definition specified" do
-        before do
-          @function = IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index').functions(0)
-        end
+      subject { function.add }
 
+      context "no definition specified" do
+        let(:function) { IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index').functions(0) }
         it "should raise an exception" do
-          lambda { @function.add }.should raise_error(IndexTank::MissingFunctionDefinition)
+          expect { subject }.to raise_error(IndexTank::MissingFunctionDefinition)
         end
       end
 
       context "function saved" do
         before do
-          @stubs.put(@path_prefix) { [200, {}, ''] }
+          stubs.put(path_prefix) { [200, {}, ''] }
         end
 
-        it "should return true" do
-          @function.add.should be_true
-        end
+        it { should be_true }
       end
 
       context "index is initializing" do
         before do
-          @stubs.put(@path_prefix) { [409, {}, ''] }
+          stubs.put(path_prefix) { [409, {}, ''] }
         end
 
-        it "should return false" do
-          @function.add.should be_false
-        end
+        it { subject.should be_false }
       end
 
       context "invalid or missing argument" do
         before do
-          @stubs.put(@path_prefix) { [400, {}, ''] }
+          stubs.put(path_prefix) { [400, {}, ''] }
         end
 
-        it "should return false" do
-          @function.add.should be_false
-        end
+        it { subject.should be_false }
       end
 
       context "no index existed for the given name" do
         before do
-          @stubs.put(@path_prefix) { [404, {}, ''] }
+          stubs.put(path_prefix) { [404, {}, ''] }
         end
 
-        it "should return false" do
-          @function.add.should be_false
-        end
+        it { subject.should be_false }
       end
     end
 
     describe "#delete" do
+      subject { function.delete }
+
       context "function deleted" do
         before do
-          @stubs.delete(@path_prefix) { [200, {}, ''] }
+          stubs.delete(path_prefix) { [200, {}, ''] }
         end
 
-        it "should return true" do
-          @function.delete.should be_true
-        end
+        it { should be_true }
       end
 
       context "index is initializing" do
         before do
-          @stubs.delete(@path_prefix) { [409, {}, ''] }
+          stubs.delete(path_prefix) { [409, {}, ''] }
         end
 
-        it "should return false" do
-          @function.delete.should be_false
-        end
+        it { subject.should be_false }
       end
 
       context "invalid or missing argument" do
         before do
-          @stubs.delete(@path_prefix) { [400, {}, ''] }
+          stubs.delete(path_prefix) { [400, {}, ''] }
         end
 
-        it "should return false" do
-          @function.delete.should be_false
-        end
+        it { subject.should be_false }
       end
 
       context "no index existed for the given name" do
         before do
-          @stubs.delete(@path_prefix) { [404, {}, ''] }
+          stubs.delete(path_prefix) { [404, {}, ''] }
         end
 
-        it "should return false" do
-          @function.delete.should be_false
-        end
+        it { subject.should be_false }
       end
     end
   end
