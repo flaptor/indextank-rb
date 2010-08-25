@@ -238,7 +238,7 @@ describe IndexTank::Index do
       subject { index.functions }
 
       before do
-        stubs.get("/functions") { [200, {}, '{"0": "0-A", "1": "-age", "2": "relevance"}'] }
+        stubs.get("#{path_prefix}functions") { [200, {}, '{"0": "0-A", "1": "-age", "2": "relevance"}'] }
       end
 
       it "should return an array of functions" do

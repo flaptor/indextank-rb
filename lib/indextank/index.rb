@@ -85,7 +85,7 @@ module IndexTank
 
     def functions(index = -1, formula = nil)
       if index == -1
-        @conn.get("/functions").body.sort.collect do |index, formula|
+        @conn.get("functions").body.sort.collect do |index, formula|
           Function.new("#{@uri}/functions", index, formula)
         end
       else
