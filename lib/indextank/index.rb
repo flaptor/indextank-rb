@@ -34,6 +34,8 @@ module IndexTank
 
     def delete
       response = @conn.delete('')
+
+      response.status == 200
     end
 
     def running?

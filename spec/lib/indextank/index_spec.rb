@@ -53,9 +53,7 @@ describe IndexTank::Index do
           stubs.delete(path_prefix) { [200, {}, ''] }
         end
 
-        it "should be a success" do
-          subject.status.should == 200
-        end
+        it { should be_true }
       end
 
       context "the index does not exist" do
@@ -63,9 +61,7 @@ describe IndexTank::Index do
           stubs.delete(path_prefix) { [204, {}, ''] }
         end
 
-        it "should have no content" do
-          subject.status.should == 204
-        end
+        it { subject.should be_false }
       end
     end
   end
