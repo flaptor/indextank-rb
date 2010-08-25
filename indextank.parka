@@ -5,7 +5,7 @@ Parka::Specification.new do |gem|
   gem.version  = IndexTank::VERSION
   gem.summary  = "Ruby Client for the IndexTank API"
   gem.homepage = "http://www.indextank.com"
-  gem.authors  = ["Terence Lee", "Santiago Perez"]
-  gem.email    = ["terence@heroku.com"]
+  gem.authors  = ["Santiago Perez", "Terence Lee"]
+  gem.email    = ["santip@santip.com.ar", "hone02@gmail.com"]
 end
 

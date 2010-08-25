@@ -5,10 +5,10 @@ Gem::Specification.new do |s|
   s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Terence Lee", "Santiago Perez"]
+  s.authors = ["Santiago Perez", "Terence Lee"]
   s.date = %q{2010-08-24}
   s.description = %q{Ruby Client for the IndexTank API}
-  s.email = ["terence@heroku.com"]
+  s.email = ["santip@santip.com.ar", "hone02@gmail.com"]
   s.files = ["lib/indextank.rb", "lib/indextank/client.rb", "lib/indextank/document.rb", "lib/indextank/exceptions.rb", "lib/indextank/function.rb", "lib/indextank/index.rb", "spec/lib/indextank/client_spec.rb", "spec/lib/indextank/document_spec.rb", "spec/lib/indextank/function_spec.rb", "spec/lib/indextank/index_spec.rb", "spec/spec_helper.rb"]
   s.homepage = %q{http://www.indextank.com}
   s.require_paths = ["lib"]
