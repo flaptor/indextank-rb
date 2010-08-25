@@ -10,5 +10,5 @@ group :development do
   gem "rr",                 "0.10.11"
   gem "rake",               "0.8.7"
   gem "ruby-debug"
-  gem "parka",              "0.3.1"
+  gem "parka",              "0.4.3"
 end
