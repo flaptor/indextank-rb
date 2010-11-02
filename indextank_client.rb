@@ -75,7 +75,7 @@ module IndexTank
         end
         
         def get_index(name)
-            return IndexClient.new("#{@uri}/v1/indexes/#{URI.escape(name)}")
+            return IndexClient.new(@uri, URI.escape(name))
         end
     
         def create_index(name)
@@ -90,13 +90,14 @@ module IndexTank
     
         def list_indexes()
             code, indexes = GET "/v1/indexes"
-            return indexes.map do |name,metadata| IndexClient.new "#{@uri}/v1/indexes/#{name}", metadata end 
+            return indexes.map do |name,metadata| IndexClient.new @uri, name, metadata end 
         end
     end
     
     class IndexClient < RestClient
-        def initialize(index_url, metadata=nil)
-            @uri = URI.parse(index_url)
+        def initialize(uri, name, metadata=nil)
+            @name = name
+            @uri = URI.parse("#{uri}/v1/indexes/#{name}")
             @metadata = metadata
         end
         
@@ -127,6 +128,8 @@ module IndexTank
                 raise
             end
         end
+
+        attr_accessor :name
     
         # the options argument may contain a :variables key
         # with a Hash from variable numbers to their float values
