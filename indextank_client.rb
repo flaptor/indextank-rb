@@ -152,6 +152,16 @@ module IndexTank
             code, r = DELETE "/docs", options
             return r
         end
+
+        # updates the categories of a given document
+        # the categories argument should be a Hash from string
+        # to string defining the value for each category defined
+        # by this document.  
+        def update_categories(docid, categories, options={})
+            options.merge!( :docid => docid, :categories => categories )
+            code, r = PUT "/docs/categories", options
+            return r
+        end
     
         # the options argument may contain an :index_code definition to override 
         # this instance's default index_code  
@@ -173,6 +183,10 @@ module IndexTank
         #             should be returned. (requires an index that supports storage)
         #   :function => an int with the index of the scoring function to be used
         #                for this query 
+        #   :category_filters => a Hash from string to list of strings. the keys
+        #                        should be category names and the value should be
+        #                        the list of values for that category for which 
+        #                        results should be returned
         def search(query, options={})
             options = { :start => 0, :len => 10 }.merge(options)
             options.merge!( :q => query )
