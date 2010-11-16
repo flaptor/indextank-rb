@@ -190,6 +190,9 @@ module IndexTank
         def search(query, options={})
             options = { :start => 0, :len => 10 }.merge(options)
             options.merge!( :q => query )
+            if options.key? :category_filters
+                options[:category_filters] = options[:category_filters].to_json
+            end
             begin
                 code, r = GET "/search", options
                 return r
