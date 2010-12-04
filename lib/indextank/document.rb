@@ -42,5 +42,19 @@ module IndexTank
 
       resp.status == 200
     end
+
+    # updates the categories of a given document
+    # the categories argument should be a Hash from string
+    # to string defining the value for each category defined
+    # by this document.
+    def update_categories(categories, options = {} )
+      options.merge!(:docid => self.docid, :categories => categories)
+      resp = @conn.put do |req|
+        req.url "categories"
+        req.body = options.to_json
+      end
+
+      resp.status == 200
+    end
   end
 end

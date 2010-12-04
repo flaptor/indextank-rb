@@ -63,10 +63,23 @@ module IndexTank
     #             should be returned. (requires an index that supports storage)
     #   :function => an int with the index of the scoring function to be used
     #                for this query
+    #   :variables => a hash int => float, with variables that can be later
+    #                 used in scoring :function
     def search(query, options = {})
       options = {:start => 0, :len => 10 }.merge(options).merge(:q => query)
+      if options[:variables]
+        options[:variables].each_pair { |k, v| options.merge!( :"var#{k}" => v ) }
+      end
+
       @conn.get do |req|
         req.url 'search', options
+      end.body
+    end
+
+    def suggest(query, options = {})
+      options.merge!({:query => query})
+      @conn.get do |req|
+        req.url 'autocomplete', options
       end.body
     end
 
