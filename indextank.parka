@@ -1,0 +1,11 @@
+require "parka/specification"
+
+Parka::Specification.new do |gem|
+  gem.name     = "indextank"
+  gem.version  = IndexTank::VERSION
+  gem.summary  = "Ruby Client for the IndexTank API"
+  gem.homepage = "http://www.indextank.com"
+  gem.authors  = ["Santiago Perez", "Terence Lee"]
+  gem.email    = ["santip@santip.com.ar", "hone02@gmail.com"]
+end
+
