@@ -87,8 +87,9 @@ module IndexTank
     # this instance's default index_code  
     def promote(docid, query, options={})
       options.merge!( :docid => docid, :query => query )
-      resp = @conn.get do |req|
-        req.url 'promote', options
+      resp = @conn.put do |req|
+        req.url 'promote'
+        req.body = options.to_json
       end
 
       resp.status == 200
