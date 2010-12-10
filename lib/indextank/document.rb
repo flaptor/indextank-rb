@@ -1,4 +1,5 @@
 require 'json'
+require 'faraday'
 
 module IndexTank
   class Document
@@ -6,7 +7,7 @@ module IndexTank
 
     def initialize(document_url, docid)
       @docid = docid
-      @conn  = IndexTank.setup_connection(document_url)
+      @conn  = IndexTank.setup_connection(document_url) proc { |builder| builder.use Indextank::ResponseDocument }
     end
 
     # the options argument may contain a :variables key
@@ -55,6 +56,43 @@ module IndexTank
       end
 
       resp.status == 200
+    end
+
+    #private
+
+    # Handles standard returns status. All methods on documents should return HTTP 200, 
+    # and the errors are 'common' for any other value
+    #def handle_return_status(status)
+    #  case status
+    #  when 400
+    #    raise InvalidArgument
+    #  when 409
+    #    raise IndexInitializing
+    #  when 404
+    #    raise IndexNotFound
+    #  end
+    #end
+  end
+
+  class ResponseDocument < Faraday::Response::Middleware
+    def self.register_on_complete(env)
+      env[:response].on_complete do |finished_env|
+        case finished_env[:status]
+        when 200
+          raise Bleh
+        when 400
+          raise InvalidArgument
+        when 409
+          raise IndexInitializing
+        when 404
+          raise IndexNotFound
+        end
+      end
+    end
+
+    def initialize(app)
+      super
+      @parser = nil
     end
   end
 end
