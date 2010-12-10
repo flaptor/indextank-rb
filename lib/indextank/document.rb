@@ -58,20 +58,6 @@ module IndexTank
       resp.status == 200
     end
 
-    #private
-
-    # Handles standard returns status. All methods on documents should return HTTP 200, 
-    # and the errors are 'common' for any other value
-    #def handle_return_status(status)
-    #  case status
-    #  when 400
-    #    raise InvalidArgument
-    #  when 409
-    #    raise IndexInitializing
-    #  when 404
-    #    raise IndexNotFound
-    #  end
-    #end
   end
 
   class ResponseDocument < Faraday::Response::Middleware
