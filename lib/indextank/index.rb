@@ -20,6 +20,8 @@ module IndexTank
         raise IndexAlreadyExists
       when 409
         raise TooManyIndexes
+      when 401 
+        raise InvalidApiKey 
       end
     end
 
@@ -34,8 +36,10 @@ module IndexTank
 
     def delete
       response = @conn.delete('')
-
-      response.status == 200
+      case response.status
+      when 204
+        raise NonExistentIndex
+      end
     end
 
     def running?
@@ -71,9 +75,22 @@ module IndexTank
         options[:variables].each_pair { |k, v| options.merge!( :"var#{k}" => v ) }
       end
 
-      @conn.get do |req|
+      if options[:category_filters]
+        options[:category_filters] = options[:category_filters].to_json
+        p options[:category_filters] 
+      end
+
+      response = @conn.get do |req|
         req.url 'search', options
-      end.body
+      end  
+      case response.status
+      when 400
+        raise InvalidQuery
+      when 409
+        raise IndexInitializing
+      end
+
+      response.body
     end
 
     def suggest(query, options = {})
@@ -91,8 +108,6 @@ module IndexTank
         req.url 'promote'
         req.body = options.to_json
       end
-
-      resp.status == 200
     end
 
     def document(docid)
