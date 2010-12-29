@@ -2,6 +2,8 @@ source "http://rubygems.org"
 
 gem "faraday"
 gem "yajl-ruby",          ">=0.7.7", :require => "yajl"
+gem "json_pure",          ">=1.4.6", :require => "json"
+
 
 group :development do
   gem "jeweler",            ">=1.4.0"
