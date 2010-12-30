@@ -86,11 +86,11 @@ module IndexTank
       if options[:docvar_filters]
         # go from { 3 => [ [1, 3], [5, nil] ]} to filter_docvar3 => 1:3,5:*
         options[:docvar_filters].each_pair { |k, v| 
-                                              v.each { |val|
+                                              rng = v.map { |val|
                                                 raise ArgumentError, "using a range with bound count != 2"  unless val.length == 2
-                                                rng = "#{val[0] || '*'}:#{val[1] || '*'}"
-                                                options.merge!( :"filter_docvar#{k}" => rng ) 
-                                              }
+                                                "#{val[0] || '*'}:#{val[1] || '*'}"
+                                              }.join ","
+                                              options.merge!( :"filter_docvar#{k}" => rng ) 
                                            }
         options.delete :docvar_filters
       end
@@ -98,11 +98,11 @@ module IndexTank
       if options[:function_filters]
         # go from { 2 => [ [1 , 3],[5,8] ]} to filter_function2 => 1:3,5:8
         options[:function_filters].each_pair { |k, v| 
-                                              v.each { |rng|
-                                                raise ArgumentError, "using a range with bound count != 2"  unless rng.length == 2
-                                                rng = "#{v[0] || '*'}:#{v[1] || '*'}"
-                                                options.merge!( :"filter_function#{k}" => rng ) 
-                                              }
+                                              rng = v.map { |val|
+                                                raise ArgumentError, "using a range with bound count != 2"  unless val.length == 2
+                                                "#{val[0] || '*'}:#{val[1] || '*'}"
+                                              }.join ","
+                                              options.merge!( :"filter_function#{k}" => rng ) 
                                            }
         options.delete :function_filters
       end
