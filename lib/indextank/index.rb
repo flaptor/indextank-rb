@@ -69,15 +69,63 @@ module IndexTank
     #                for this query
     #   :variables => a hash int => float, with variables that can be later
     #                 used in scoring :function
+    #   :category_filters => a hash with String keys and String values to filter the query based on document categories.
+    #                       Keys represent category names, and associated values represent the value for the matching documents
+    #                       on them.
+    #
+    #                       Example:
+    #                         category_filters => {"size" => "big", "price" => "expensive"}
+    #                         means that only documents that have "big" as size category and "expensive" as price category
+    #                         will match the query
+    #   :docvar_filters =>  a hash with int keys and Array values to filter the query based on document variables.
+    #                       Keys represent document-variable numbers, see IndexTank::Document#update_variables, 
+    #                       and the associated values are Arrays of 2-item Arrays.
+    #
+    #                       Example: 
+    #                           docvar_filters = { 1 => [ [2, 3], [5, nil] ]} 
+    #                           means that only documents with document variable number 1 between 2 and 3 or bigger than 5
+    #                           will match the query.
+    #   :function_filters => a hash with int keys and Array values to filter the query based on scoring functions.
+    #                       Keys represent scoring function numbers,
+    #                       see IndexTank::Function, and the associated values are Arrays of 2-item Arrays.
+    #
+    #                       Example: 
+    #                           function_filters = { 3 => [ [nil, 2], [5, 7], [8,14] ]} 
+    #                           means that only documents whose score calculated by scoring function 3 is lower than 2,
+    #                           between 5 and 7 or between 8 and 14 will match the query.
     def search(query, options = {})
       options = {:start => 0, :len => 10 }.merge(options).merge(:q => query)
       if options[:variables]
         options[:variables].each_pair { |k, v| options.merge!( :"var#{k}" => v ) }
+        options.delete :variables
+      end
+
+      if options[:docvar_filters]
+        # go from { 3 => [ [1, 3], [5, nil] ]} to filter_docvar3 => 1:3,5:*
+        options[:docvar_filters].each_pair { |k, v| 
+                                              rng = v.map { |val|
+                                                raise ArgumentError, "using a range with bound count != 2"  unless val.length == 2
+                                                "#{val[0] || '*'}:#{val[1] || '*'}"
+                                              }.join ","
+                                              options.merge!( :"filter_docvar#{k}" => rng ) 
+                                           }
+        options.delete :docvar_filters
+      end
+
+      if options[:function_filters]
+        # go from { 2 => [ [1 , 3],[5,8] ]} to filter_function2 => 1:3,5:8
+        options[:function_filters].each_pair { |k, v| 
+                                              rng = v.map { |val|
+                                                raise ArgumentError, "using a range with bound count != 2"  unless val.length == 2
+                                                "#{val[0] || '*'}:#{val[1] || '*'}"
+                                              }.join ","
+                                              options.merge!( :"filter_function#{k}" => rng ) 
+                                           }
+        options.delete :function_filters
       end
 
       if options[:category_filters]
         options[:category_filters] = options[:category_filters].to_json
-        p options[:category_filters] 
       end
 
       response = @conn.get do |req|
