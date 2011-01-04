@@ -5,7 +5,7 @@ directory = File.expand_path(File.dirname(__FILE__))
 require File.join(directory, 'indextank', 'client')
 
 module IndexTank
-  VERSION = "0.0.5"
+  VERSION = "0.0.6"
 
   def self.setup_connection(url, &block)
     @conn = Faraday::Connection.new(:url => url) do |builder|

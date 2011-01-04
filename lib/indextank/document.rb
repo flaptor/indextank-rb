@@ -7,7 +7,7 @@ module IndexTank
 
     def initialize(document_url, docid)
       @docid = docid
-      builder = Proc.new { |builder| builder.use ResponseDocument }
+      builder = Proc.new { |builder| builder.use DocumentResponseMiddleware }
       @conn  = IndexTank.setup_connection(document_url, &builder)
     end
 
@@ -59,22 +59,9 @@ module IndexTank
 
       resp.status 
     end
-    #private
-    # Handles standard returns status. All methods on documents should return HTTP 200, 
-    # and the errors are 'common' for any other value
-    #def handle_return_status(status)
-    #  case status
-    #  when 400
-    #    raise InvalidArgument
-    #  when 409
-    #    raise IndexInitializing
-    #  when 404
-    #    raise IndexNotFound
-    #  end
-    #end
   end
 
-  class ResponseDocument < Faraday::Response::Middleware
+  class DocumentResponseMiddleware < Faraday::Response::Middleware
     def self.register_on_complete(env)
       env[:response].on_complete do |finished_env|
         case finished_env[:status]
@@ -85,7 +72,7 @@ module IndexTank
         when 404
           raise NonExistentIndex
         when 400
-          raise InvalidArgument
+          raise InvalidArgument, finished_env[:body]
         end
       end
     end
