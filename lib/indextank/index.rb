@@ -69,25 +69,22 @@ module IndexTank
     #                for this query
     #   :variables => a hash int => float, with variables that can be later
     #                 used in scoring :function
-    #   :category_filters => a hash with String keys and String values to filter the query based on document categories.
-    #                       Keys represent category names, and associated values represent the value for the matching documents
-    #                       on them.
+    #   :category_filters => a hash to filter the query based on document categories. Keys represent category names.
+    #                       see http://indextank.com/documentation/ruby-client#faceting
     #
     #                       Example:
-    #                         category_filters => {"size" => "big", "price" => "expensive"}
+    #                         category_filters => {:size => "big", :price => "expensive"}
     #                         means that only documents that have "big" as size category and "expensive" as price category
     #                         will match the query
     #   :docvar_filters =>  a hash with int keys and Array values to filter the query based on document variables.
-    #                       Keys represent document-variable numbers, see IndexTank::Document#update_variables, 
-    #                       and the associated values are Arrays of 2-item Arrays.
+    #                       see http://indextank.com/documentation/ruby-client#range_queries
     #
     #                       Example: 
     #                           docvar_filters = { 1 => [ [2, 3], [5, nil] ]} 
     #                           means that only documents with document variable number 1 between 2 and 3 or bigger than 5
     #                           will match the query.
     #   :function_filters => a hash with int keys and Array values to filter the query based on scoring functions.
-    #                       Keys represent scoring function numbers,
-    #                       see IndexTank::Function, and the associated values are Arrays of 2-item Arrays.
+    #                       see http://indextank.com/documentation/ruby-client#range_queries
     #
     #                       Example: 
     #                           function_filters = { 3 => [ [nil, 2], [5, 7], [8,14] ]} 
