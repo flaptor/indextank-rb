@@ -5,7 +5,9 @@ module IndexTank
   class Document
     attr_reader :docid
 
+    # :docid => a String or Symbol, that is no longer than 1024 bytes when UTF-8 encoded
     def initialize(document_url, docid)
+      raise InvalidArgument , "docid too long. max is 1024 bytes and got #{String(docid).bytesize}" unless String(docid).bytesize <= 1024
       @docid = docid
       builder = Proc.new { |builder| builder.use DocumentResponseMiddleware }
       @conn  = IndexTank.setup_connection(document_url, &builder)

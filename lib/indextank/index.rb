@@ -155,6 +155,8 @@ module IndexTank
       end
     end
 
+    # creates a new document, identified by :docid
+    # :docid => a String or Symbol, with bytesize no longer than 1024 bytes
     def document(docid)
       Document.new("#{@uri}/docs", docid)
     end
