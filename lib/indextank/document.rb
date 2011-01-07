@@ -67,6 +67,10 @@ module IndexTank
     def self.register_on_complete(env)
       env[:response].on_complete do |finished_env|
         case finished_env[:status]
+        when 200
+          nil # this is the expected code
+        when 204
+          nil # this is another expected code, for empty responses
         when 401
           raise InvalidApiKey
         when 409
@@ -75,6 +79,8 @@ module IndexTank
           raise NonExistentIndex
         when 400
           raise InvalidArgument, finished_env[:body]
+        else
+          raise UnexpectedHTTPException, finished_env[:body]
         end
       end
     end

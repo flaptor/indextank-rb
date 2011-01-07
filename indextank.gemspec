@@ -2,13 +2,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{indextank}
-  s.version = "0.0.7"
+  s.version = "1.0.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Santiago Perez", "Terence Lee"]
-  s.date = %q{2011-01-06}
+  s.authors = ["Santiago Perez", "Terence Lee", "Diego Buthay"]
+  s.date = %q{2011-01-07}
   s.description = %q{Ruby Client for the IndexTank API}
-  s.email = ["santip@santip.com.ar", "hone02@gmail.com"]
+  s.email = ["santip@santip.com.ar", "hone02@gmail.com", "dbuthay@gmail.com"]
   s.files = ["lib/indextank.rb", "lib/indextank/client.rb", "lib/indextank/document.rb", "lib/indextank/exceptions.rb", "lib/indextank/function.rb", "lib/indextank/index.rb", "spec/lib/indextank/client_spec.rb", "spec/lib/indextank/document_spec.rb", "spec/lib/indextank/function_spec.rb", "spec/lib/indextank/index_spec.rb", "spec/spec_helper.rb"]
   s.homepage = %q{http://www.indextank.com}
   s.require_paths = ["lib"]

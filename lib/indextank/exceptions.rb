@@ -7,4 +7,5 @@ module IndexTank
   class InvalidQuery < StandardError; end
   class IndexInitializing < StandardError; end
   class InvalidArgument < StandardError; end
+  class UnexpectedHTTPException < StandardError; end
 end
