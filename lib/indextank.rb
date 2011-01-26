@@ -17,6 +17,7 @@ module IndexTank
     end
     @uri = URI.parse(url)
     @conn.basic_auth @uri.user,@uri.password
+    @conn.headers['User-Agent'] = "IndexTank-Ruby/#{VERSION}"
     @conn
   end
 end
