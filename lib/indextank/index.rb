@@ -31,7 +31,7 @@ module IndexTank
         @metadata = response.body
       end
 
-      response
+      response.body
     end
 
     def delete
@@ -54,6 +54,28 @@ module IndexTank
 
     def exists?
       refresh.status != 404
+    end
+
+    def batch_insert(documents)
+      puts documents.to_json
+      resp = @conn.put do |req|
+        req.url "docs"
+        req.body = documents.to_json
+      end
+      case resp.status
+      when 200
+        nil
+      when 401
+        raise InvalidApiKey
+      when 409
+        raise IndexInitializing
+      when 404
+        raise NonExistentIndex
+      when 400
+        raise InvalidArgument, resp.body
+      else
+        raise UnexpectedHTTPException, resp.body
+      end
     end
 
     # the options argument may contain an :index_code definition to override 
