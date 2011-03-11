@@ -31,7 +31,7 @@ module IndexTank
         @metadata = response.body
       end
 
-      response.body
+      response
     end
 
     def delete
@@ -64,7 +64,7 @@ module IndexTank
       end
       case resp.status
       when 200
-        nil
+        resp.body
       when 401
         raise InvalidApiKey
       when 409
