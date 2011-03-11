@@ -57,7 +57,6 @@ module IndexTank
     end
 
     def batch_insert(documents)
-      puts documents.to_json
       resp = @conn.put do |req|
         req.url "docs"
         req.body = documents.to_json
