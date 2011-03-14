@@ -5,10 +5,10 @@ directory = File.expand_path(File.dirname(__FILE__))
 require File.join(directory, 'indextank', 'client')
 
 module IndexTank
-  VERSION = "1.0.8.1"
+  VERSION = "1.0.8.2"
 
   def self.setup_connection(url, &block)
-    @conn = Faraday::Connection.new(:url => url) do |builder|
+    @conn = Faraday::Connection.new(:url => url, :ssl => {:verify => false} ) do |builder|
       builder.adapter Faraday.default_adapter
       builder.use Faraday::Response::Yajl
       if block_given? 
