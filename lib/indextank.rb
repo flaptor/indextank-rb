@@ -1,4 +1,4 @@
-require 'faraday'
+require 'faraday_stack'
 require 'uri'
 
 directory = File.expand_path(File.dirname(__FILE__))
@@ -7,13 +7,11 @@ require File.join(directory, 'indextank', 'client')
 module IndexTank
   VERSION = "1.0.8.1"
 
-  def self.setup_connection(url, &block)
+  def self.setup_connection(url)
     @conn = Faraday::Connection.new(:url => url) do |builder|
+      builder.use FaradayStack::ResponseJSON
+      yield builder if block_given? 
       builder.adapter Faraday.default_adapter
-      builder.use Faraday::Response::Yajl
-      if block_given? 
-        block.call builder
-      end 
     end
     @uri = URI.parse(url)
     @conn.basic_auth @uri.user,@uri.password

@@ -9,8 +9,9 @@ module IndexTank
     def initialize(document_url, docid)
       raise InvalidArgument , "docid too long. max is 1024 bytes and got #{String(docid).bytesize}" unless String(docid).bytesize <= 1024
       @docid = docid
-      builder = Proc.new { |builder| builder.use DocumentResponseMiddleware }
-      @conn  = IndexTank.setup_connection(document_url, &builder)
+      @conn = IndexTank.setup_connection(document_url) do |faraday|
+        faraday.use DocumentResponseMiddleware
+      end
     end
 
     # the options argument may contain a :variables key
@@ -64,30 +65,23 @@ module IndexTank
   end
 
   class DocumentResponseMiddleware < Faraday::Response::Middleware
-    def self.register_on_complete(env)
-      env[:response].on_complete do |finished_env|
-        case finished_env[:status]
-        when 200
-          nil # this is the expected code
-        when 204
-          nil # this is another expected code, for empty responses
-        when 401
-          raise InvalidApiKey
-        when 409
-          raise IndexInitializing
-        when 404
-          raise NonExistentIndex
-        when 400
-          raise InvalidArgument, finished_env[:body]
-        else
-          raise UnexpectedHTTPException, finished_env[:body]
-        end
+    def on_complete(env)
+      case env[:status]
+      when 200
+        nil # this is the expected code
+      when 204
+        nil # this is another expected code, for empty responses
+      when 401
+        raise InvalidApiKey
+      when 409
+        raise IndexInitializing
+      when 404
+        raise NonExistentIndex
+      when 400
+        raise InvalidArgument, finished_env[:body]
+      else
+        raise UnexpectedHTTPException, finished_env[:body]
       end
-    end
-
-    def initialize(app)
-      super
-      @parser = nil
     end
   end
 end

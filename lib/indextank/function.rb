@@ -8,9 +8,10 @@ module IndexTank
       @uri        = "#{function_url}/#{index}"
       @index      = index
       @definition = definition
-      # Function and Document have the same Response statuses .. so borrow DocumentResponseMiddleware
-      builder = Proc.new { |builder| builder.use IndexTank::DocumentResponseMiddleware }
-      @conn  = IndexTank.setup_connection(@uri, &builder)
+      @conn = IndexTank.setup_connection(@uri) do |faraday|
+        # Function and Document have the same Response statuses
+        faraday.use IndexTank::DocumentResponseMiddleware
+      end
     end
 
     def add(options = {})
