@@ -1,4 +1,5 @@
 require File.expand_path('../../../spec_helper', __FILE__)
+require 'yajl'
 
 describe IndexTank::Index do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
@@ -53,7 +54,7 @@ describe IndexTank::Index do
           stubs.delete(path_prefix) { [200, {}, ''] }
         end
 
-        it { should be_true }
+        it { should be_nil }
       end
 
       context "the index does not exist" do
@@ -61,7 +62,9 @@ describe IndexTank::Index do
           stubs.delete(path_prefix) { [204, {}, ''] }
         end
 
-        it { subject.should be_false }
+        it "should raise an exception" do
+          expect { subject }.to raise_error(IndexTank::NonExistentIndex)
+        end
       end
     end
   end
@@ -141,7 +144,7 @@ describe IndexTank::Index do
 
     context "search is successful" do
       before do
-        stubs.get("#{path_prefix}search?q=foo&start=0&len=10") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
+        stubs.get("#{path_prefix}search?len=10&q=foo&start=0") { [200, {}, '{"matches": 4, "search_time": "0.022", "results": [{"docid": "http://cnn.com/HEALTH"}, {"docid": "http://www.cnn.com/HEALTH/"}, {"docid": "http://cnn.com/HEALTH/?hpt=Sbin"}, {"docid": "http://cnn.com/HEALTH/"}]}'] }
       end
 
       it "should have the number of matches" do
@@ -160,65 +163,78 @@ describe IndexTank::Index do
       end
     end
 
-    context "index is initializing", :pending => true do
+    context "index is initializing" do
       before do
-        stubs.get("#{path_prefix}search") { [409, {}, ''] }
+        stubs.get("#{path_prefix}search?len=10&q=foo&start=0") { [409, {}, ''] }
       end
 
-      it "should return an empty body"
+      it "should return raise an exception" do
+        expect { subject }.to raise_error(IndexTank::IndexInitializing)
+      end
     end
 
-    context "index is invalid/missing argument", :pending => true do
+    context "index is invalid/missing argument" do
       before do
-        stubs.get("#{path_prefix}search") { [400, {}, ''] }
+        stubs.get("#{path_prefix}search?len=10&q=foo&start=0") { [400, {}, ''] }
       end
 
-      it "should return a descriptive error message"
+      it "should return raise an exception" do
+        expect { subject }.to raise_error(IndexTank::InvalidQuery)
+      end
     end
 
-    context "no index existed for the given name", :pending => true do
+    context "no index existed for the given name" do
       before do
-        stubs.get("#{path_prefix}search") { [404, {}, ''] }
+        stubs.get("#{path_prefix}search?len=10&q=foo&start=0") { [404, {}, ''] }
       end
 
-      it "should return a descriptive error message"
+      it "should return raise an exception" do
+        expect { subject }.to raise_error(IndexTank::NonExistentIndex)
+      end
     end
   end
 
   describe "#promote" do
-    subject { index.promote(4, 'foo') }
+    subject { index.promote("4", "foo") }
 
     context "when the document is promoted" do
       before do
-        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [200, {}, ''] }
+        stubs.put("#{path_prefix}promote", Yajl::dump({"docid" => "4", "query" =>"foo"})) { [200, {}, ''] }
       end
 
-      it { should be_true }
+      it { should be_nil }
     end
 
     context "when the index is initializing" do
       before do
-        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [409, {}, ''] }
+        stubs.put("#{path_prefix}promote", body=Yajl::dump({"docid" => "4", "query" =>"foo"})) { [409, {}, ''] }
       end
 
-      it { subject.should be_false }
+      it "should raise an exception" do
+        expect{ subject }.to raise_error(IndexTank::IndexInitializing)
+      end
     end
 
     context "when invalid or missing argument" do
       before do
-        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [400, {}, ''] }
+        stubs.put("#{path_prefix}promote", body=Yajl::dump({"docid" => "4", "query" =>"foo"})) { [400, {}, ''] }
       end
 
-      it { subject.should be_false }
+      it "should raise an exception" do
+        expect{ subject }.to raise_error(IndexTank::InvalidArgument)
+      end
     end
 
     context "when no index exists for the given name" do
       before do
-        stubs.get("#{path_prefix}promote?docid=4&query=foo") { [404, {}, ''] }
+        stubs.put("#{path_prefix}promote", body=Yajl::dump({"docid" => "4", "query" =>"foo"})) { [404, {}, ''] }
       end
 
-      it { subject.should be_false }
+      it "should raise an exception" do
+        expect{ subject }.to raise_error(IndexTank::NonExistentIndex)
+      end
     end
+
   end
 
   describe "#document" do

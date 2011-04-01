@@ -78,9 +78,9 @@ module IndexTank
       when 404
         raise NonExistentIndex
       when 400
-        raise InvalidArgument, finished_env[:body]
+        raise InvalidArgument, env[:body]
       else
-        raise UnexpectedHTTPException, finished_env[:body]
+        raise UnexpectedHTTPException, env[:body]
       end
     end
   end

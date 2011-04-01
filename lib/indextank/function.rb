@@ -22,6 +22,8 @@ module IndexTank
         req.url ''
         req.body = options.to_json
       end
+
+      true
     end
 
     def delete(options = {})
@@ -29,6 +31,8 @@ module IndexTank
         req.url ''
         req.body = options.to_json
       end
+
+      true
     end
 
     def ==(other)

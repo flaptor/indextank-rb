@@ -152,6 +152,8 @@ module IndexTank
       case response.status
       when 400
         raise InvalidQuery
+      when 404
+        raise NonExistentIndex
       when 409
         raise IndexInitializing
       end
@@ -173,6 +175,15 @@ module IndexTank
       resp = @conn.put do |req|
         req.url 'promote'
         req.body = options.to_json
+      end
+      
+      case resp.status
+      when 409
+        raise IndexInitializing
+      when 404
+        raise NonExistentIndex
+      when 400
+        raise InvalidArgument, resp.body
       end
     end
 
