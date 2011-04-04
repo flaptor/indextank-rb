@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{indextank}
-  s.version = "1.0.9"
+  s.version = "1.0.9.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Santiago Perez", "Terence Lee", "Diego Buthay"]
-  s.date = %q{2011-01-07}
+  s.date = %q{2011-04-04}
   s.description = %q{Ruby Client for the IndexTank API}
   s.email = ["santip@santip.com.ar", "hone02@gmail.com", "dbuthay@gmail.com"]
   s.files = ["lib/indextank.rb", "lib/indextank/client.rb", "lib/indextank/document.rb", "lib/indextank/exceptions.rb", "lib/indextank/function.rb", "lib/indextank/index.rb", "spec/lib/indextank/client_spec.rb", "spec/lib/indextank/document_spec.rb", "spec/lib/indextank/function_spec.rb", "spec/lib/indextank/index_spec.rb", "spec/spec_helper.rb"]
@@ -28,9 +28,8 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rake>, [">= 0.8.7"])
       s.add_development_dependency(%q<ruby-debug>, [">= 0"])
       s.add_development_dependency(%q<parka>, [">= 0.3.1"])
-      s.add_runtime_dependency(%q<faraday>, [">= 0"])
+      s.add_runtime_dependency(%q<faraday-stack>, [">= 0"])
       s.add_runtime_dependency(%q<yajl-ruby>, [">= 0.7.7"])
-      s.add_runtime_dependency(%q<json_pure>, [">= 1.4.6"])
     else
       s.add_dependency(%q<jeweler>, [">= 1.4.0"])
       s.add_dependency(%q<rspec-core>, [">= 2.0.0.beta.19"])
@@ -39,9 +38,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rake>, [">= 0.8.7"])
       s.add_dependency(%q<ruby-debug>, [">= 0"])
       s.add_dependency(%q<parka>, [">= 0.3.1"])
-      s.add_dependency(%q<faraday>, [">= 0"])
+      s.add_dependency(%q<faraday-stack>, [">= 0"])
       s.add_dependency(%q<yajl-ruby>, [">= 0.7.7"])
-      s.add_dependency(%q<json_pure>, [">= 1.4.6"])
     end
   else
     s.add_dependency(%q<jeweler>, [">= 1.4.0"])
@@ -51,8 +49,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rake>, [">= 0.8.7"])
     s.add_dependency(%q<ruby-debug>, [">= 0"])
     s.add_dependency(%q<parka>, [">= 0.3.1"])
-    s.add_dependency(%q<faraday>, [">= 0"])
+    s.add_dependency(%q<faraday-stack>, [">= 0"])
     s.add_dependency(%q<yajl-ruby>, [">= 0.7.7"])
-    s.add_dependency(%q<json_pure>, [">= 1.4.6"])
   end
 end

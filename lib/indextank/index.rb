@@ -1,7 +1,7 @@
 require 'indextank/exceptions'
 require 'indextank/document'
 require 'indextank/function'
-require 'json'
+require 'yajl/json_gem'
 
 module IndexTank
   class Index
