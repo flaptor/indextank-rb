@@ -80,7 +80,7 @@ module IndexTank
     def bulk_delete(docids)
       data = []
       docids.each do |docid|
-        data << {'docid': docid}
+        data << {'docid' => docid}
       end
       resp = @conn.delete do |req|
         req.url "docs"
