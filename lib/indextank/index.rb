@@ -82,7 +82,7 @@ module IndexTank
       docids.each do |docid|
         data << {'docid': docid}
       end
-      resp = @conn.put do |req|
+      resp = @conn.delete do |req|
         req.url "docs"
         req.body = data.to_json
       end
@@ -101,7 +101,6 @@ module IndexTank
         raise UnexpectedHTTPException, resp.body
       end
     end
-
 
     # the options argument may contain an :index_code definition to override 
     # this instance's default index_code
