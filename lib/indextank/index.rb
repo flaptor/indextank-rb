@@ -77,6 +77,31 @@ module IndexTank
       end
     end
 
+    def bulk_delete(docids)
+      data = []
+      docids.each do |docid|
+        data << {'docid' => docid}
+      end
+      resp = @conn.delete do |req|
+        req.url "docs"
+        req.body = data.to_json
+      end
+      case resp.status
+      when 200
+        resp.body
+      when 401
+        raise InvalidApiKey
+      when 409
+        raise IndexInitializing
+      when 404
+        raise NonExistentIndex
+      when 400
+        raise InvalidArgument, resp.body
+      else
+        raise UnexpectedHTTPException, resp.body
+      end
+    end
+
     # the options argument may contain an :index_code definition to override 
     # this instance's default index_code
     # it can also contain any of the following:
