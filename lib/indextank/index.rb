@@ -11,8 +11,13 @@ module IndexTank
       @metadata = metadata
     end
 
-    def add
-      response = @conn.put('')
+    def add( options = {} )
+      options = {:public_search => false}.merge(options)
+      
+      response = @conn.put do |req|
+        req.url ""
+        req.body = options.to_json
+      end
       case response.status
       when 201
         true
