@@ -12,23 +12,43 @@ module IndexTank
     end
 
     def add( options = {} )
-      options = {:public_search => false}.merge(options)
-      
+
+      if self.exists?
+        raise IndexAlreadyExists
+      end
+
       response = @conn.put do |req|
         req.url ""
-        req.body = options.to_json
+        req.body = options.to_json unless options.length == 0
       end
       case response.status
       when 201
         true
-      when 204
-        raise IndexAlreadyExists
       when 409
         raise TooManyIndexes
       when 401 
         raise InvalidApiKey 
       end
     end
+
+    def update( options )
+
+      if not self.exists?
+        raise NonExistentIndex
+      end
+      
+      response = @conn.put do |req|
+        req.url ""
+        req.body = options.to_json
+      end
+      case response.status
+      when 204
+        true
+      when 401 
+        raise InvalidApiKey 
+      end
+    end
+
 
     def refresh
       response = @conn.get('')
@@ -65,7 +85,6 @@ module IndexTank
       refresh
       @metadata['public_search']
     end
-
 
     def batch_insert(documents)
       resp = @conn.put do |req|
