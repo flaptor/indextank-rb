@@ -61,6 +61,12 @@ module IndexTank
       refresh.status != 404
     end
 
+    def public_search_enabled?
+      refresh
+      @metadata['public_search']
+    end
+
+
     def batch_insert(documents)
       resp = @conn.put do |req|
         req.url "docs"
