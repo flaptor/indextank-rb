@@ -49,7 +49,6 @@ module IndexTank
       end
     end
 
-
     def refresh
       response = @conn.get('')
       if response.status == 200
