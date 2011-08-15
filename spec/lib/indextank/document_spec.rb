@@ -3,7 +3,7 @@ require File.expand_path('../../../spec_helper', __FILE__)
 describe IndexTank::Document do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:document) { IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index').document('document1') }
-  let(:path_prefix) { '/v1/indexes/new-index/docs/' }
+  let(:path_prefix) { '/v1/indexes/new-index/docs' }
 
   before { stub_setup_connection do |builder| builder.use IndexTank::DocumentResponseMiddleware; end }
 
@@ -106,7 +106,7 @@ describe IndexTank::Document do
 
     context "variables indexed" do
       before do
-        stubs.put("#{path_prefix}variables") { [200, {}, ''] }
+        stubs.put("#{path_prefix}/variables") { [200, {}, ''] }
       end
 
       it { should be_true }
@@ -114,7 +114,7 @@ describe IndexTank::Document do
 
     context "index is initializing" do
       before do
-        stubs.put("#{path_prefix}variables") { [409, {}, ''] }
+        stubs.put("#{path_prefix}/variables") { [409, {}, ''] }
       end
 
       it "should raise an exception" do
@@ -124,7 +124,7 @@ describe IndexTank::Document do
 
     context "invalid or missing argument" do
       before do
-        stubs.put("#{path_prefix}variables") { [400, {}, ''] }
+        stubs.put("#{path_prefix}/variables") { [400, {}, ''] }
       end
 
       it "should raise an exception" do
@@ -134,7 +134,7 @@ describe IndexTank::Document do
 
     context "no index existed for the given name" do
       before do
-        stubs.put("#{path_prefix}variables") { [404, {}, ''] }
+        stubs.put("#{path_prefix}/variables") { [404, {}, ''] }
       end
 
       it "should raise an exception" do

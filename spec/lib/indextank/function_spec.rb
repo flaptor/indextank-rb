@@ -3,7 +3,7 @@ require File.expand_path('../../../spec_helper', __FILE__)
 describe IndexTank::Function do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:function) { IndexTank::Client.new("http://:xxxx@dstqe.api.indextank.com").indexes('new-index').functions(0, '-age') }
-  let(:path_prefix) { '/v1/indexes/new-index/functions/0/' }
+  let(:path_prefix) { '/v1/indexes/new-index/functions/0' }
 
   before { stub_setup_connection do |builder| builder.use IndexTank::DocumentResponseMiddleware; end}
 
