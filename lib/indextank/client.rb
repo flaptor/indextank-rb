@@ -46,7 +46,7 @@ module IndexTank
       when 401
         raise InvalidApiKey
       else
-        raise UnexpectedHTTPException, finished_env[:body]
+        raise UnexpectedHTTPException, env[:body]
       end
     end
 
