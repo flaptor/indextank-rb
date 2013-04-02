@@ -21,7 +21,7 @@ end
 def stub_setup_connection
   stub(IndexTank).setup_connection(anything) do |url|
     Faraday::Connection.new(:url => url) do |builder|
-      builder.use FaradayStack::ResponseJSON
+      builder.use FaradayMiddleware::ParseJson
       yield builder if block_given?
       builder.adapter :test, stubs
     end
